@@ -1,0 +1,2022 @@
+{% extends "base.html" %}
+
+{% block title %}Статистика - Minecraft Bedwars{% endblock %}
+
+{% block content %}
+<div class="statistics-page">
+    <!-- Header -->
+    <div class="stats-header text-center py-4 mb-5">
+        <h1 class="display-4 fw-bold text-warning mb-3">
+            <i class="fas fa-chart-bar me-3"></i>Статистика сервера
+        </h1>
+        <p class="lead text-muted">Детальная аналитика игроков Bedwars</p>
+    </div>
+
+    <!-- Overall Stats -->
+    {% if stats %}
+    <div class="overall-stats mb-5">
+        <h3 class="section-title mb-4">
+            <i class="fas fa-globe text-info me-2"></i>Общая статистика
+        </h3>
+        <div class="row g-4">
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="stat-box enhanced-stat-box modern-stat-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="stat-icon-container">
+                        <div class="stat-icon-bg"></div>
+                        <i class="fas fa-users stat-icon text-primary"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value gradient-text" data-target="{{ stats.total_players }}">0</div>
+                        <div class="stat-label">Игроков</div>
+                        <div class="stat-change">+12% за месяц</div>
+                    </div>
+                    <div class="stat-wave"></div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="stat-box enhanced-stat-box">
+                    <div class="stat-icon">
+                        <i class="fas fa-sword text-danger"></i>
+                    </div>
+                    <div class="stat-value gradient-text">{{ "{:,}".format(stats.total_kills) }}</div>
+                    <div class="stat-label">Киллов</div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="stat-box enhanced-stat-box">
+                    <div class="stat-icon">
+                        <i class="fas fa-skull text-secondary"></i>
+                    </div>
+                    <div class="stat-value gradient-text">{{ "{:,}".format(stats.total_deaths) }}</div>
+                    <div class="stat-label">Смертей</div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="stat-box enhanced-stat-box">
+                    <div class="stat-icon">
+                        <i class="fas fa-gamepad text-success"></i>
+                    </div>
+                    <div class="stat-value gradient-text">{{ "{:,}".format(stats.total_games) }}</div>
+                    <div class="stat-label">Игр</div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="stat-box enhanced-stat-box">
+                    <div class="stat-icon">
+                        <i class="fas fa-trophy text-warning"></i>
+                    </div>
+                    <div class="stat-value gradient-text">{{ "{:,}".format(stats.total_wins) }}</div>
+                    <div class="stat-label">Побед</div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="stat-box enhanced-stat-box">
+                    <div class="stat-icon">
+                        <i class="fas fa-bed text-info"></i>
+                    </div>
+                    <div class="stat-value gradient-text">{{ stats.total_beds_broken }}</div>
+                    <div class="stat-label">Кроватей</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Economic Statistics -->
+        <div class="row g-4 mt-4">
+            <div class="col-12">
+                <h4 class="section-title mb-4">
+                    <i class="fas fa-coins text-warning me-2"></i>Экономическая статистика
+                </h4>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-box">
+                    <div class="stat-icon">
+                        <i class="fas fa-coins text-warning"></i>
+                    </div>
+                    <div class="stat-value">{{ "{:,}".format(stats.total_coins) }}</div>
+                    <div class="stat-label">Всего койнов</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-box">
+                    <div class="stat-icon">
+                        <i class="fas fa-star text-purple"></i>
+                    </div>
+                    <div class="stat-value">{{ "{:,}".format(stats.total_reputation) }}</div>
+                    <div class="stat-label">Всего репутации</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-box">
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line text-success"></i>
+                    </div>
+                    <div class="stat-value">{{ stats.average_coins }}</div>
+                    <div class="stat-label">Средние койны</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-box">
+                    <div class="stat-icon">
+                        <i class="fas fa-medal text-info"></i>
+                    </div>
+                    <div class="stat-value">{{ stats.average_reputation }}</div>
+                    <div class="stat-label">Средняя репутация</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Economic Players -->
+        {% if stats.richest_player or stats.most_reputable_player %}
+        <div class="row g-4 mt-4">
+            <div class="col-12">
+                <h4 class="section-title mb-4">
+                    <i class="fas fa-crown text-warning me-2"></i>Экономические лидеры
+                </h4>
+            </div>
+            {% if stats.richest_player %}
+            <div class="col-md-6">
+                <div class="stat-box text-center">
+                    <div class="stat-icon mx-auto mb-3">
+                        <i class="fas fa-money-bill-wave text-warning"></i>
+                    </div>
+                    <h5 class="text-warning">Самый богатый игрок</h5>
+                    <div class="stat-value">{{ stats.richest_player.nickname }}</div>
+                    <div class="stat-label">{{ "{:,}".format(stats.richest_player.coins) }} койнов</div>
+                </div>
+            </div>
+            {% endif %}
+            {% if stats.most_reputable_player %}
+            <div class="col-md-6">
+                <div class="stat-box text-center">
+                    <div class="stat-icon mx-auto mb-3">
+                        <i class="fas fa-gem text-purple"></i>
+                    </div>
+                    <h5 class="text-purple">Самый уважаемый игрок</h5>
+                    <div class="stat-value">{{ stats.most_reputable_player.nickname }}</div>
+                    <div class="stat-label">{{ "{:,}".format(stats.most_reputable_player.reputation) }} репутации</div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Charts Section -->
+    <div class="charts-section mb-5">
+        <div class="row g-4">
+            <!-- Top Players by Experience -->
+            <div class="col-md-6">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h4 class="chart-title">
+                            <i class="fas fa-star text-warning me-2"></i>Топ по опыту
+                        </h4>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="experienceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Players by Kills -->
+            <div class="col-md-6">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h4 class="chart-title">
+                            <i class="fas fa-sword text-danger me-2"></i>Топ по киллам
+                        </h4>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="killsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Level Distribution -->
+            <div class="col-md-6">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h4 class="chart-title">
+                            <i class="fas fa-chart-pie text-success me-2"></i>Распределение уровней
+                        </h4>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="levelsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Comparison -->
+            <div class="col-md-6">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h4 class="chart-title">
+                            <i class="fas fa-chart-line text-info me-2"></i>Сравнение показателей
+                        </h4>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Players Section -->
+    {% if top_players %}
+    <div class="top-players-section mt-5">
+        <div class="section-header text-center mb-5">
+            <h2 class="section-title">
+                <i class="fas fa-crown text-warning me-3"></i>
+                <span class="gradient-text">Лучшие игроки</span>
+                <i class="fas fa-crown text-warning ms-3"></i>
+            </h2>
+            <p class="section-subtitle">Топ игроки в различных категориях</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Experience Leaders -->
+            <div class="col-lg-4 col-md-6">
+                <div class="top-category-card experience-card">
+                    <div class="card-header-gradient">
+                        <div class="category-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <h4 class="category-title">Опыт</h4>
+                        <p class="category-subtitle">Самые опытные воины</p>
+                    </div>
+                    <div class="players-list">
+                        {% for player in top_players.experience %}
+                        <div class="player-item rank-{{ loop.index }}" data-rank="{{ loop.index }}">
+                            <div class="player-rank">
+                                {% if loop.index == 1 %}
+                                    <div class="rank-crown">👑</div>
+                                {% elif loop.index == 2 %}
+                                    <div class="rank-medal silver">🥈</div>
+                                {% elif loop.index == 3 %}
+                                    <div class="rank-medal bronze">🥉</div>
+                                {% else %}
+                                    <div class="rank-number">#{{ loop.index }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="player-info">
+                                <div class="player-name">
+                                    <a href="{{ url_for('player_profile', player_id=player.id) }}" class="player-link">
+                                        {% if player.leaderboard_use_gradient and player.can_use_leaderboard_gradients %}
+                                        <span class="name-gradient {% if player.leaderboard_gradient_animated %}animated{% endif %}"
+                                              style="background: linear-gradient(45deg, {{ player.leaderboard_gradient_start }}, {{ player.leaderboard_gradient_end }}); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                            {{ player.nickname }}
+                                        </span>
+                                        {% else %}
+                                        <span style="color: {{ player.leaderboard_name_color }};">{{ player.nickname }}</span>
+                                        {% endif %}
+                                    </a>
+                                </div>
+                                <div class="player-level">Уровень {{ player.level }}</div>
+                            </div>
+
+                            <div class="player-stat">
+                                <div class="stat-value">{{ "{:,}".format(player.experience) }}</div>
+                                <div class="stat-label">XP</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kill Leaders -->
+            <div class="col-lg-4 col-md-6">
+                <div class="top-category-card kills-card">
+                    <div class="card-header-gradient">
+                        <div class="category-icon">
+                            <i class="fas fa-sword"></i>
+                        </div>
+                        <h4 class="category-title">Убийства</h4>
+                        <p class="category-subtitle">Безжалостные убийцы</p>
+                    </div>
+                    <div class="players-list">
+                        {% for player in top_players.kills %}
+                        <div class="player-item rank-{{ loop.index }}" data-rank="{{ loop.index }}">
+                            <div class="player-rank">
+                                {% if loop.index == 1 %}
+                                    <div class="rank-crown">👑</div>
+                                {% elif loop.index == 2 %}
+                                    <div class="rank-medal silver">🥈</div>
+                                {% elif loop.index == 3 %}
+                                    <div class="rank-medal bronze">🥉</div>
+                                {% else %}
+                                    <div class="rank-number">#{{ loop.index }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="player-info">
+                                <div class="player-name">
+                                    <a href="{{ url_for('player_profile', player_id=player.id) }}" class="player-link">
+                                        {% if player.leaderboard_use_gradient and player.can_use_leaderboard_gradients %}
+                                        <span class="name-gradient {% if player.leaderboard_gradient_animated %}animated{% endif %}"
+                                              style="background: linear-gradient(45deg, {{ player.leaderboard_gradient_start }}, {{ player.leaderboard_gradient_end }}); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                            {{ player.nickname }}
+                                        </span>
+                                        {% else %}
+                                        <span style="color: {{ player.leaderboard_name_color }};">{{ player.nickname }}</span>
+                                        {% endif %}
+                                    </a>
+                                </div>
+                                <div class="player-stats-mini">K/D: {{ player.kd_ratio }}</div>
+                            </div>
+
+                            <div class="player-stat">
+                                <div class="stat-value">{{ "{:,}".format(player.kills) }}</div>
+                                <div class="stat-label">Киллов</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bed Breakers -->
+            <div class="col-lg-4 col-md-6">
+                <div class="top-category-card beds-card">
+                    <div class="card-header-gradient">
+                        <div class="category-icon">
+                            <i class="fas fa-bed"></i>
+                        </div>
+                        <h4 class="category-title">Кровати</h4>
+                        <p class="category-subtitle">Разрушители снов</p>
+                    </div>
+                    <div class="players-list">
+                        {% for player in top_players.beds_broken %}
+                        <div class="player-item rank-{{ loop.index }}" data-rank="{{ loop.index }}">
+                            <div class="player-rank">
+                                {% if loop.index == 1 %}
+                                    <div class="rank-crown">👑</div>
+                                {% elif loop.index == 2 %}
+                                    <div class="rank-medal silver">🥈</div>
+                                {% elif loop.index == 3 %}
+                                    <div class="rank-medal bronze">🥉</div>
+                                {% else %}
+                                    <div class="rank-number">#{{ loop.index }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="player-info">
+                                <div class="player-name">
+                                    <a href="{{ url_for('player_profile', player_id=player.id) }}" class="player-link">
+                                        {% if player.leaderboard_use_gradient and player.can_use_leaderboard_gradients %}
+                                        <span class="name-gradient {% if player.leaderboard_gradient_animated %}animated{% endif %}"
+                                              style="background: linear-gradient(45deg, {{ player.leaderboard_gradient_start }}, {{ player.leaderboard_gradient_end }}); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                            {{ player.nickname }}
+                                        </span>
+                                        {% else %}
+                                        <span style="color: {{ player.leaderboard_name_color }};">{{ player.nickname }}</span>
+                                        {% endif %}
+                                    </a>
+                                </div>
+                                <div class="player-stats-mini">Побед: {{ player.wins }}</div>
+                            </div>
+
+                            <div class="player-stat">
+                                <div class="stat-value">{{ "{:,}".format(player.beds_broken) }}</div>
+                                <div class="stat-label">Кроватей</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Winners -->
+            <div class="col-lg-4 col-md-6">
+                <div class="top-category-card wins-card">
+                    <div class="card-header-gradient">
+                        <div class="category-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <h4 class="category-title">Победы</h4>
+                        <p class="category-subtitle">Непобедимые чемпионы</p>
+                    </div>
+                    <div class="players-list">
+                        {% for player in top_players.wins %}
+                        <div class="player-item rank-{{ loop.index }}" data-rank="{{ loop.index }}">
+                            <div class="player-rank">
+                                {% if loop.index == 1 %}
+                                    <div class="rank-crown">👑</div>
+                                {% elif loop.index == 2 %}
+                                    <div class="rank-medal silver">🥈</div>
+                                {% elif loop.index == 3 %}
+                                    <div class="rank-medal bronze">🥉</div>
+                                {% else %}
+                                    <div class="rank-number">#{{ loop.index }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="player-info">
+                                <div class="player-name">
+                                    <a href="{{ url_for('player_profile', player_id=player.id) }}" class="player-link">
+                                        {% if player.leaderboard_use_gradient and player.can_use_leaderboard_gradients %}
+                                        <span class="name-gradient {% if player.leaderboard_gradient_animated %}animated{% endif %}"
+                                              style="background: linear-gradient(45deg, {{ player.leaderboard_gradient_start }}, {{ player.leaderboard_gradient_end }}); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                            {{ player.nickname }}
+                                        </span>
+                                        {% else %}
+                                        <span style="color: {{ player.leaderboard_name_color }};">{{ player.nickname }}</span>
+                                        {% endif %}
+                                    </a>
+                                </div>
+                                <div class="player-stats-mini">Винрейт: {{ player.win_rate }}%</div>
+                            </div>
+
+                            <div class="player-stat">
+                                <div class="stat-value">{{ "{:,}".format(player.wins) }}</div>
+                                <div class="stat-label">Побед</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Final Kills -->
+            <div class="col-lg-4 col-md-6">
+                <div class="top-category-card final-kills-card">
+                    <div class="card-header-gradient">
+                        <div class="category-icon">
+                            <i class="fas fa-skull"></i>
+                        </div>
+                        <h4 class="category-title">Финальные</h4>
+                        <p class="category-subtitle">Завершители игр</p>
+                    </div>
+                    <div class="players-list">
+                        {% for player in top_players.final_kills %}
+                        <div class="player-item rank-{{ loop.index }}" data-rank="{{ loop.index }}">
+                            <div class="player-rank">
+                                {% if loop.index == 1 %}
+                                    <div class="rank-crown">👑</div>
+                                {% elif loop.index == 2 %}
+                                    <div class="rank-medal silver">🥈</div>
+                                {% elif loop.index == 3 %}
+                                    <div class="rank-medal bronze">🥉</div>
+                                {% else %}
+                                    <div class="rank-number">#{{ loop.index }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="player-info">
+                                <div class="player-name">
+                                    <a href="{{ url_for('player_profile', player_id=player.id) }}" class="player-link">
+                                        {% if player.leaderboard_use_gradient and player.can_use_leaderboard_gradients %}
+                                        <span class="name-gradient {% if player.leaderboard_gradient_animated %}animated{% endif %}"
+                                              style="background: linear-gradient(45deg, {{ player.leaderboard_gradient_start }}, {{ player.leaderboard_gradient_end }}); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                            {{ player.nickname }}
+                                        </span>
+                                        {% else %}
+                                        <span style="color: {{ player.leaderboard_name_color }};">{{ player.nickname }}</span>
+                                        {% endif %}
+                                    </a>
+                                </div>
+                                <div class="player-stats-mini">FK/D: {{ player.fkd_ratio }}</div>
+                            </div>
+
+                            <div class="player-stat">
+                                <div class="stat-value">{{ "{:,}".format(player.final_kills) }}</div>
+                                <div class="stat-label">Финальных</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- New Top Players Carousel Section -->
+    <div class="top-players-carousel-section">
+        <div class="players-carousel-container">
+            <div class="carousel-wrapper">
+                <button class="carousel-btn prev-btn"><i class="fas fa-chevron-left"></i></button>
+                <div class="player-card-container">
+                    {% for player in top_players.experience[:3] %} {# Displaying first 3 players as example #}
+                    <div class="minecraft-player-card {% if loop.index == 1 %}rank-1{% elif loop.index == 2 %}rank-2{% elif loop.index == 3 %}rank-3{% endif %}">
+                        <div class="player-card-header">
+                            <div class="rank-badge rank-{{ loop.index }}">
+                                {% if loop.index == 1 %}
+                                    <i class="fas fa-crown"></i>
+                                {% elif loop.index == 2 %}
+                                    <i class="fas fa-medal"></i>
+                                {% elif loop.index == 3 %}
+                                    <i class="fas fa-award"></i>
+                                {% endif %}
+                                <span>#{{ loop.index }}</span>
+                            </div>
+                            <span class="player-role">Топ Игрок</span>
+                        </div>
+
+                        <div class="player-skin-container">
+                            <div class="skin-backdrop"></div>
+                            <img src="https://crafatar.com/avatars/{{ player.uuid }}?size=100&overlay" alt="{{ player.nickname }}'s Skin" class="minecraft-skin">
+                            <div class="skin-glow"></div>
+                        </div>
+
+                        <h3 class="player-nickname">{{ player.nickname }}</h3>
+                        <div class="player-level">Уровень {{ player.level }}</div>
+
+                        <div class="star-rating">
+                            {% for i in range(player.rating | int) %}
+                                <i class="fas fa-star star-filled"></i>
+                            {% endfor %}
+                            {% for i in range(5 - (player.rating | int)) %}
+                                <i class="fas fa-star star-empty"></i>
+                            {% endfor %}
+                        </div>
+
+                        <div class="player-stats-grid">
+                            <div class="stat-item">
+                                <i class="fas fa-sword stat-icon"></i>
+                                <div class="stat-value">{{ "{:,}".format(player.kills) }}</div>
+                                <div class="stat-label">Киллы</div>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-bed stat-icon"></i>
+                                <div class="stat-value">{{ "{:,}".format(player.beds_broken) }}</div>
+                                <div class="stat-label">Кровати</div>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-chart-line stat-icon"></i>
+                                <div class="stat-value">{{ player.kd_ratio }}</div>
+                                <div class="stat-label">K/D</div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <button class="carousel-btn next-btn"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="carousel-indicators">
+                {% for i in range(3) %} {# Assuming 3 players max in carousel for simplicity #}
+                <div class="carousel-indicator {% if loop.index == 1 %}active{% endif %}" data-slide="{{ loop.index0 }}"></div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Leaderboard -->
+    <div class="text-center mt-5">
+        <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg">
+            <i class="fas fa-arrow-left me-2"></i>Назад к таблице лидеров
+        </a>
+        {% if is_admin %}
+        <a href="{{ url_for('admin') }}" class="btn btn-warning btn-lg ms-2">
+            <i class="fas fa-cog me-2"></i>Панель администратора
+        </a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_head %}
+<style>
+/* Modern Statistics Styles */
+.modern-stat-card {
+    background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+    border: 1px solid rgba(255,193,7,0.2);
+    border-radius: 20px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    backdrop-filter: blur(15px);
+}
+
+.modern-stat-card:hover {
+    transform: translateY(-12px) scale(1.03);
+    border-color: rgba(255,193,7,0.6);
+    box-shadow: 0 20px 50px rgba(255,193,7,0.3);
+}
+
+.stat-icon-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+}
+
+.stat-icon-bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, rgba(255,193,7,0.2), rgba(255,140,0,0.2));
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    z-index: 2;
+    filter: drop-shadow(0 0 10px rgba(255,193,7,0.5));
+}
+
+.stat-content {
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 900;
+    background: linear-gradient(45deg, #ffd700, #ffaa00, #ff6b35);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientShift 3s ease-in-out infinite;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 1.1rem;
+    color: #adb5bd;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.stat-change {
+    font-size: 0.9rem;
+    color: #28a745;
+    font-weight: 500;
+}
+
+.stat-wave {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, #ffd700, #ffaa00, #ff6b35);
+    border-radius: 0 0 20px 20px;
+    animation: waveMove 3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.7; }
+    50% { transform: scale(1.1); opacity: 1; }
+}
+
+@keyframes waveMove {
+    0%, 100% { transform: scaleX(0.8); opacity: 0.5; }
+    50% { transform: scaleX(1.2); opacity: 1; }
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+/* Chart enhancements */
+.chart-card {
+    background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+    border: 2px solid rgba(255,193,7,0.3);
+    border-radius: 20px;
+    padding: 2rem;
+    height: 500px;
+    transition: all 0.4s ease;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.chart-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255,193,7,0.1), transparent);
+    transform: rotate(45deg);
+    transition: all 0.6s ease;
+    opacity: 0;
+}
+
+.chart-card:hover::before {
+    animation: chartSweep 1.5s ease-in-out;
+    opacity: 1;
+}
+
+@keyframes chartSweep {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+.chart-card:hover {
+    transform: translateY(-10px);
+    border-color: rgba(255,193,7,0.8);
+    box-shadow: 0 25px 50px rgba(255,193,7,0.2);
+}
+
+/* Enhanced progress indicators */
+.progress-ring {
+    position: relative;
+    display: inline-block;
+}
+
+.progress-ring svg {
+    transform: rotate(-90deg);
+}
+
+.progress-ring circle {
+    transition: stroke-dashoffset 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Floating elements */
+.floating-stats {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0,0,0,0.8);
+    border-radius: 15px;
+    padding: 1rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,193,7,0.3);
+    z-index: 1000;
+}
+
+/* Players Carousel Styles */
+.top-players-carousel-section {
+    padding: 4rem 0;
+    background: linear-gradient(135deg, rgba(255,193,7,0.05), rgba(255,140,0,0.05));
+    border-radius: 20px;
+    margin: 3rem 0;
+}
+
+.players-carousel-container {
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.carousel-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.carousel-btn {
+    background: linear-gradient(45deg, rgba(255,193,7,0.8), rgba(255,140,0,0.8));
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 0 1rem;
+    box-shadow: 0 4px 15px rgba(255,193,7,0.3);
+}
+
+.carousel-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(255,193,7,0.5);
+}
+
+.player-card-container {
+    width: 400px;
+    height: 500px;
+    perspective: 1000px;
+}
+
+.minecraft-player-card {
+    background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(0,0,0,0.3));
+    border: 2px solid rgba(255,193,7,0.3);
+    border-radius: 20px;
+    padding: 2rem;
+    text-align: center;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    backdrop-filter: blur(15px);
+    transition: all 0.5s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.minecraft-player-card.rank-1 {
+    border-color: #ffd700;
+    box-shadow: 0 0 30px rgba(255,215,0,0.4);
+}
+
+.minecraft-player-card.rank-2 {
+    border-color: #c0c0c0;
+    box-shadow: 0 0 30px rgba(192,192,192,0.4);
+}
+
+.minecraft-player-card.rank-3 {
+    border-color: #cd7f32;
+    box-shadow: 0 0 30px rgba(205,127,50,0.4);
+}
+
+.player-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.rank-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.5rem;
+}
+
+.rank-badge.rank-1 {
+    color: #ffd700;
+    filter: drop-shadow(0 0 10px rgba(255,215,0,0.8));
+}
+
+.rank-badge.rank-2 {
+    color: #c0c0c0;
+    filter: drop-shadow(0 0 10px rgba(192,192,192,0.8));
+}
+
+.rank-badge.rank-3 {
+    color: #cd7f32;
+    filter: drop-shadow(0 0 10px rgba(205,127,50,0.8));
+}
+
+.player-role {
+    background: rgba(255,193,7,0.2);
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #ffc107;
+}
+
+.player-skin-container {
+    position: relative;
+    margin: 1rem 0;
+    display: flex;
+    justify-content: center;
+}
+
+.skin-backdrop {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, rgba(255,193,7,0.3), transparent);
+    border-radius: 50%;
+    filter: blur(20px);
+}
+
+.minecraft-skin {
+    width: 100px;
+    height: 100px;
+    border-radius: 10px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+.minecraft-skin:hover {
+    transform: scale(1.1) rotateY(15deg);
+}
+
+.skin-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100px;
+    height: 100px;
+    border-radius: 10px;
+    box-shadow: 0 0 40px rgba(255,193,7,0.6);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.minecraft-player-card:hover .skin-glow {
+    opacity: 1;
+}
+
+.player-nickname {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 10px rgba(255,193,7,0.5);
+}
+
+.player-level {
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.8);
+    margin-bottom: 1rem;
+}
+
+.star-rating {
+    margin-bottom: 1.5rem;
+}
+
+.star-filled {
+    color: #ffd700;
+    margin: 0 2px;
+    filter: drop-shadow(0 0 5px rgba(255,215,0,0.8));
+}
+
+.star-empty {
+    color: rgba(255,255,255,0.3);
+    margin: 0 2px;
+}
+
+.player-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: auto;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    filter: drop-shadow(0 0 5px rgba(255,193,7,0.5));
+}
+
+.stat-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #ffc107;
+    margin-bottom: 0.3rem;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.carousel-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.carousel-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.carousel-indicator.active {
+    background: #ffc107;
+    transform: scale(1.2);
+    box-shadow: 0 0 10px rgba(255,193,7,0.8);
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    .modern-stat-card {
+        padding: 1.5rem;
+    }
+
+    .stat-icon {
+        font-size: 2rem;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+    }
+
+    .chart-card {
+        height: 350px;
+        padding: 1rem;
+    }
+
+    .player-card-container {
+        width: 320px;
+        height: 450px;
+    }
+
+    .minecraft-player-card {
+        padding: 1.5rem;
+    }
+
+    .carousel-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+        margin: 0 0.5rem;
+    }
+
+    .player-stats-grid {
+        gap: 0.5rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+<script>
+// Enhanced statistics with animations
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate stat cards
+    animateStatCards();
+
+    // Load and display charts
+    loadStatisticsData();
+
+    // Add interactive hover effects
+    addInteractiveEffects();
+
+    // Initialize player carousel
+    initPlayerCarousel();
+});
+
+function animateStatCards() {
+    const statBoxes = document.querySelectorAll('.stat-box');
+    statBoxes.forEach((box, index) => {
+        setTimeout(() => {
+            box.style.animation = 'fadeInUp 0.8s ease forwards';
+
+            // Animate numbers
+            const valueElement = box.querySelector('.stat-value');
+            if (valueElement) {
+                const finalValue = valueElement.textContent.replace(/[^0-9]/g, '');
+                if (finalValue) {
+                    animateCounter(valueElement, 0, parseInt(finalValue), 2000);
+                }
+            }
+        }, index * 150);
+    });
+}
+
+function animateCounter(element, start, end, duration) {
+    const startTime = performance.now();
+    const originalText = element.textContent;
+
+    function updateCounter(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        const currentValue = Math.floor(start + (end - start) * easeOut);
+
+        // Preserve formatting
+        if (originalText.includes(',')) {
+            element.textContent = currentValue.toLocaleString();
+        } else if (originalText.includes('%')) {
+            element.textContent = currentValue + '%';
+        } else {
+            element.textContent = currentValue.toLocaleString();
+        }
+
+        if (progress < 1) {
+            requestAnimationFrame(updateCounter);
+        }
+    }
+
+    requestAnimationFrame(updateCounter);
+}
+
+function loadStatisticsData() {
+    fetch('{{ url_for("api_stats") }}')
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error('Error loading statistics:', data.error);
+                return;
+            }
+            createEnhancedCharts(data.charts);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
+function addInteractiveEffects() {
+    // Add glow effect to stat boxes on hover
+    document.querySelectorAll('.stat-box').forEach(box => {
+        box.addEventListener('mouseenter', function() {
+            this.style.boxShadow = '0 0 30px rgba(255, 193, 7, 0.4)';
+            this.style.transform = 'translateY(-5px) scale(1.02)';
+        });
+
+        box.addEventListener('mouseleave', function() {
+            this.style.boxShadow = 'var(--shadow-md)';
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+}
+
+function createEnhancedCharts(chartData) {
+    // Common chart options for consistent styling
+    const commonOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: {
+            duration: 2000,
+            easing: 'easeInOutQuart'
+        },
+        plugins: {
+            legend: {
+                labels: {
+                    color: '#fff',
+                    font: {
+                        size: 14,
+                        weight: 'bold'
+                    }
+                }
+            },
+            tooltip: {
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                titleColor: '#ffc107',
+                bodyColor: '#fff',
+                borderColor: '#ffc107',
+                borderWidth: 1
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    color: '#adb5bd',
+                    font: { size: 12 }
+                },
+                grid: {
+                    color: 'rgba(255, 255, 255, 0.1)',
+                    drawBorder: false
+                }
+            },
+            x: {
+                ticks: {
+                    color: '#adb5bd',
+                    font: { size: 12 }
+                },
+                grid: {
+                    color: 'rgba(255, 255, 255, 0.1)',
+                    drawBorder: false
+                }
+            }
+        }
+    };
+
+    // Experience Chart with gradient
+    const expCtx = document.getElementById('experienceChart').getContext('2d');
+    const expGradient = expCtx.createLinearGradient(0, 0, 0, 400);
+    expGradient.addColorStop(0, 'rgba(255, 193, 7, 0.8)');
+    expGradient.addColorStop(1, 'rgba(255, 193, 7, 0.2)');
+
+    new Chart(expCtx, {
+        type: 'bar',
+        data: {
+            labels: chartData.top_players_exp.labels,
+            datasets: [{
+                label: 'Опыт',
+                data: chartData.top_players_exp.data,
+                backgroundColor: expGradient,
+                borderColor: '#ffc107',
+                borderWidth: 2,
+                borderRadius: 8,
+                borderSkipped: false,
+                hoverBackgroundColor: 'rgba(255, 193, 7, 1)',
+                hoverBorderColor: '#ffed4e'
+            }]
+        },
+        options: {
+            ...commonOptions,
+            plugins: {
+                ...commonOptions.plugins,
+                title: {
+                    display: true,
+                    text: '⭐ Топ игроки по опыту',
+                    color: '#ffc107',
+                    font: { size: 16, weight: 'bold' }
+                }
+            }
+        }
+    });
+
+    // Kills Chart
+    const killsCtx = document.getElementById('killsChart').getContext('2d');
+    new Chart(killsCtx, {
+        type: 'bar',
+        data: {
+            labels: chartData.top_players_kills.labels,
+            datasets: [{
+                label: 'Киллы',
+                data: chartData.top_players_kills.data,
+                backgroundColor: 'rgba(220, 53, 69, 0.8)',
+                borderColor: 'rgba(220, 53, 69, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    labels: { color: '#fff' }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { color: '#6c757d' },
+                    grid: { color: '#495057' }
+                },
+                x: {
+                    ticks: { color: '#6c757d' },
+                    grid: { color: '#495057' }
+                }
+            }
+        }
+    });
+
+    // Levels Distribution Chart
+    const levelsCtx = document.getElementById('levelsChart').getContext('2d');
+    const levelLabels = Object.keys(chartData.player_levels);
+    const levelData = Object.values(chartData.player_levels);
+
+    new Chart(levelsCtx, {
+        type: 'doughnut',
+        data: {
+            labels: levelLabels,
+            datasets: [{
+                data: levelData,
+                backgroundColor: [
+                    'rgba(255, 193, 7, 0.8)',
+                    'rgba(40, 167, 69, 0.8)',
+                    'rgba(23, 162, 184, 0.8)',
+                    'rgba(220, 53, 69, 0.8)',
+                    'rgba(108, 117, 125, 0.8)',
+                    'rgba(102, 16, 242, 0.8)'
+                ],
+                borderWidth: 2,
+                borderColor: '#343a40'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { color: '#fff' }
+                }
+            }
+        }
+    });
+
+    // Performance Comparison Chart
+    const perfCtx = document.getElementById('performanceChart').getContext('2d');
+    new Chart(perfCtx, {
+        type: 'line',
+        data: {
+            labels: chartData.top_players_exp.labels.slice(0, 5),
+            datasets: [
+                {
+                    label: 'Опыт (÷100)',
+                    data: chartData.top_players_exp.data.slice(0, 5).map(x => x / 100),
+                    borderColor: 'rgba(255, 193, 7, 1)',
+                    backgroundColor: 'rgba(255, 193, 7, 0.1)',
+                    tension: 0.4
+                },
+                {
+                    label: 'Киллы',
+                    data: chartData.top_players_kills.data.slice(0, 5),
+                    borderColor: 'rgba(220, 53, 69, 1)',
+                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                    tension: 0.4
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    labels: { color: '#fff' }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { color: '#6c757d' },
+                    grid: { color: '#495057' }
+                },
+                x: {
+                    ticks: { color: '#6c757d' },
+                    grid: { color: '#495057' }
+                }
+            }
+        }
+    });
+}
+
+// Animate stat boxes
+document.querySelectorAll('.stat-box, .chart-card, .top-list-card').forEach((element, index) => {
+    setTimeout(() => {
+        element.style.animation = 'fadeInUp 0.6s ease';
+    }, index * 100);
+});
+
+// Player Carousel Logic
+let currentSlide = 0;
+const totalSlides = document.querySelectorAll('.minecraft-player-card').length;
+const carouselWrapper = document.querySelector('.carousel-wrapper');
+const playerCardContainer = document.querySelector('.player-card-container');
+const carouselIndicators = document.querySelectorAll('.carousel-indicator');
+
+function updateCarousel() {
+    const cards = document.querySelectorAll('.minecraft-player-card');
+    const offset = -currentSlide * (playerCardContainer.offsetWidth + 20); // 20px gap
+
+    // Update card positions
+    cards.forEach((card, index) => {
+        card.style.transform = `translateX(${offset}px)`;
+        // Update rank styling based on current slide
+        card.classList.remove('rank-1', 'rank-2', 'rank-3');
+        if (index === currentSlide) {
+            if (currentSlide === 0) card.classList.add('rank-1');
+            else if (currentSlide === 1) card.classList.add('rank-2');
+            else if (currentSlide === 2) card.classList.add('rank-3');
+        } else {
+            // Reset styling for non-visible cards
+            card.style.transform = `translateX(${offset - (index - currentSlide) * playerCardContainer.offsetWidth}px)`;
+        }
+    });
+
+    // Update indicators
+    carouselIndicators.forEach((indicator, index) => {
+        indicator.classList.toggle('active', index === currentSlide);
+    });
+}
+
+function goToSlide(slideIndex) {
+    currentSlide = slideIndex;
+    updateCarousel();
+}
+
+function initPlayerCarousel() {
+    updateCarousel(); // Initial display
+
+    // Navigation buttons
+    document.querySelector('.prev-btn').addEventListener('click', () => {
+        goToSlide((currentSlide - 1 + totalSlides) % totalSlides);
+    });
+    document.querySelector('.next-btn').addEventListener('click', () => {
+        goToSlide((currentSlide + 1) % totalSlides);
+    });
+
+    // Indicator clicks
+    carouselIndicators.forEach(indicator => {
+        indicator.addEventListener('click', () => {
+            goToSlide(parseInt(indicator.getAttribute('data-slide')));
+        });
+    });
+
+    // Swipe gestures (optional)
+    let touchstartX = 0;
+    let touchstartY = 0;
+    carouselWrapper.addEventListener('touchstart', (e) => {
+        touchstartX = e.touches[0].clientX;
+        touchstartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    carouselWrapper.addEventListener('touchend', (e) => {
+        let touchendX = e.changedTouches[0].clientX;
+        let touchendY = e.changedTouches[0].clientY;
+        let diffX = touchendX - touchstartX;
+        let diffY = touchendY - touchstartY;
+
+        if (Math.abs(diffX) > Math.abs(diffY)) {
+            if (Math.abs(diffX) > 50) { // Minimum swipe distance
+                if (diffX < 0) { // Swipe left
+                    goToSlide((currentSlide + 1) % totalSlides);
+                } else { // Swipe right
+                    goToSlide((currentSlide - 1 + totalSlides) % totalSlides);
+                }
+            }
+        }
+    }, { passive: true });
+}
+</script>
+{% endblock %}
+
+/* New Top Players Section Styles */
+.top-players-section {
+    margin-top: 4rem;
+}
+
+.section-header .section-title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin-bottom: 1rem;
+}
+
+.section-header .section-subtitle {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 3rem;
+}
+
+.top-category-card {
+    background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(0,0,0,0.3));
+    border: 1px solid rgba(255, 193, 7, 0.2);
+    border-radius: 20px;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    backdrop-filter: blur(15px);
+}
+
+.top-category-card::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, transparent, rgba(255,193,7,0.4), transparent);
+    border-radius: 22px;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.top-category-card:hover::before {
+    opacity: 1;
+}
+
+.top-category-card:hover {
+    transform: translateY(-15px) scale(1.02);
+    border-color: rgba(255, 193, 7, 0.6);
+    box-shadow: 0 25px 50px rgba(255, 193, 7, 0.3);
+}
+
+.card-header-gradient {
+    background: linear-gradient(135deg, rgba(255,193,7,0.8), rgba(255,140,0,0.6));
+    padding: 2rem 1.5rem 1.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-header-gradient::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+    animation: shimmer 3s linear infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+.category-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: rgba(0,0,0,0.8);
+    filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+}
+
+.category-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: rgba(0,0,0,0.9);
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 10px rgba(255,255,255,0.3);
+}
+
+.category-subtitle {
+    font-size: 0.9rem;
+    color: rgba(0,0,0,0.7);
+    margin: 0;
+    font-weight: 600;
+}
+
+.players-list {
+    padding: 1.5rem;
+}
+
+.player-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(90deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid transparent;
+}
+
+.player-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, transparent, rgba(255,193,7,0.8), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.player-item:hover::before {
+    opacity: 1;
+}
+
+.player-item:hover {
+    transform: translateX(8px);
+    background: linear-gradient(90deg, rgba(255,193,7,0.1), rgba(255,140,0,0.05));
+    border-color: rgba(255, 193, 7, 0.3);
+}
+
+.player-item.rank-1 {
+    background: linear-gradient(90deg, rgba(255,215,0,0.2), rgba(255,215,0,0.05));
+    border-color: rgba(255,215,0,0.4);
+}
+
+.player-item.rank-2 {
+    background: linear-gradient(90deg, rgba(192,192,192,0.2), rgba(192,192,192,0.05));
+    border-color: rgba(192,192,192,0.4);
+}
+
+.player-item.rank-3 {
+    background: linear-gradient(90deg, rgba(205,127,50,0.2), rgba(205,127,50,0.05));
+    border-color: rgba(205,127,50,0.4);
+}
+
+.player-rank {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    border-radius: 50%;
+    font-weight: 900;
+    font-size: 1.2rem;
+    position: relative;
+}
+
+.rank-crown {
+    font-size: 2rem;
+    animation: bounce 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 10px rgba(255,215,0,0.8));
+}
+
+.rank-medal {
+    font-size: 1.8rem;
+    filter: drop-shadow(0 0 8px rgba(255,255,255,0.5));
+}
+
+.rank-number {
+    background: rgba(255,255,255,0.1);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.8);
+    border: 2px solid rgba(255,255,255,0.2);
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+.player-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.player-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+}
+
+.player-link {
+    text-decoration: none;
+    color: #fff;
+    transition: all 0.3s ease;
+}
+
+.player-link:hover {
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255,215,0,0.6);
+}
+
+.name-gradient {
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    background-size: 200% 200%;
+}
+
+.name-gradient.animated {
+    animation: gradientShift 3s ease-in-out infinite;
+}
+
+.player-level, .player-stats-mini {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.6);
+    font-weight: 500;
+}
+
+.player-stat {
+    text-align: right;
+    min-width: 80px;
+}
+
+.stat-value {
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: #ffd700;
+    line-height: 1.2;
+    text-shadow: 0 0 10px rgba(255,215,0,0.4);
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.6);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Category-specific colors */
+.experience-card .card-header-gradient {
+    background: linear-gradient(135deg, rgba(255,193,7,0.9), rgba(255,140,0,0.7));
+}
+
+.kills-card .card-header-gradient {
+    background: linear-gradient(135deg, rgba(220,53,69,0.9), rgba(255,107,53,0.7));
+}
+
+.beds-card .card-header-gradient {
+    background: linear-gradient(135deg, rgba(23,162,184,0.9), rgba(32,201,151,0.7));
+}
+
+.wins-card .card-header-gradient {
+    background: linear-gradient(135deg, rgba(40,167,69,0.9), rgba(32,201,151,0.7));
+}
+
+.final-kills-card .card-header-gradient {
+    background: linear-gradient(135deg, rgba(108,117,125,0.9), rgba(173,181,189,0.7));
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    .section-header .section-title {
+        font-size: 2rem;
+    }
+
+    .top-category-card {
+        margin-bottom: 2rem;
+    }
+
+    .card-header-gradient {
+        padding: 1.5rem 1rem;
+    }
+
+    .category-icon {
+        font-size: 2.5rem;
+    }
+
+    .category-title {
+        font-size: 1.3rem;
+    }
+
+    .player-item {
+        padding: 0.8rem;
+    }
+
+    .player-rank {
+        width: 50px;
+        height: 50px;
+        margin-right: 0.8rem;
+    }
+
+    .rank-crown {
+        font-size: 1.8rem;
+    }
+
+    .rank-medal {
+        font-size: 1.6rem;
+    }
+
+    .player-name {
+        font-size: 1rem;
+    }
+
+    .stat-value {
+        font-size: 1.1rem;
+    }
+}
+
+/* Enhanced progress indicators */
+.progress-ring {
+    position: relative;
+    display: inline-block;
+}
+
+.progress-ring svg {
+    transform: rotate(-90deg);
+}
+
+.progress-ring circle {
+    transition: stroke-dashoffset 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Floating elements */
+.floating-stats {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0,0,0,0.8);
+    border-radius: 15px;
+    padding: 1rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,193,7,0.3);
+    z-index: 1000;
+}
+
+/* Enhanced Top Players Styles */
+.top-lists-section .section-title {
+    background: linear-gradient(45deg, #ffd700, #ffaa00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 2rem !important;
+}
+
+.top-list-card {
+    background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+    border: 1px solid rgba(255,193,7,0.3);
+    border-radius: 15px;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+
+.top-list-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(255,193,7,0.6);
+    box-shadow: 0 15px 35px rgba(255,193,7,0.2);
+}
+
+.top-list-header {
+    background: linear-gradient(135deg, rgba(255,193,7,0.2), rgba(255,140,0,0.2));
+    padding: 1rem;
+    border-bottom: 2px solid rgba(255,193,7,0.3);
+}
+
+.top-list-header h5 {
+    margin: 0;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.top-list-body {
+    padding: 1rem;
+}
+
+.top-list-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+}
+
+.top-list-item:hover {
+    background: rgba(255,255,255,0.08);
+    transform: translateX(5px);
+}
+
+.top-list-item.rank-1 {
+    border-left-color: #ffd700;
+    background: linear-gradient(90deg, rgba(255,215,0,0.1), transparent);
+}
+
+.top-list-item.rank-2 {
+    border-left-color: #c0c0c0;
+    background: linear-gradient(90deg, rgba(192,192,192,0.1), transparent);
+}
+
+.top-list-item.rank-3 {
+    border-left-color: #cd7f32;
+    background: linear-gradient(90deg, rgba(205,127,50,0.1), transparent);
+}
+
+.top-list-item .rank {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, rgba(255,193,7,0.2), rgba(255,140,0,0.2));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-right: 1rem;
+    border: 2px solid rgba(255,193,7,0.3);
+}
+
+.top-list-item.rank-1 .rank {
+    background: linear-gradient(135deg, #ffd700, #ffaa00);
+    color: #000;
+    font-size: 1.2rem;
+}
+
+.top-list-item.rank-2 .rank {
+    background: linear-gradient(135deg, #c0c0c0, #a0a0a0);
+    color: #000;
+    font-size: 1.2rem;
+}
+
+.top-list-item.rank-3 .rank {
+    background: linear-gradient(135deg, #cd7f32, #b8691f);
+    color: #fff;
+    font-size: 1.2rem;
+}
+
+.player-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.player-name {
+    font-weight: 600;
+    color: #fff;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.player-stat {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.level-badge, .kd-badge, .win-rate-badge {
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-left: 0.5rem;
+    white-space: nowrap;
+}
+
+.level-badge {
+    background: linear-gradient(135deg, #17a2b8, #138496);
+    color: white;
+}
+
+.kd-badge.bg-success {
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+}
+
+.kd-badge.bg-warning {
+    background: linear-gradient(135deg, #ffc107, #fd7e14) !important;
+    color: #000 !important;
+}
+
+.kd-badge.bg-danger {
+    background: linear-gradient(135deg, #dc3545, #c82333) !important;
+}
+
+.win-rate-badge.bg-success {
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+}
+
+.win-rate-badge.bg-warning {
+    background: linear-gradient(135deg, #ffc107, #fd7e14) !important;
+    color: #000 !important;
+}
+
+.win-rate-badge.bg-danger {
+    background: linear-gradient(135deg, #dc3545, #c82333) !important;
+}
+
+/* Animation for top lists */
+.top-list-item {
+    opacity: 0;
+    animation: slideInUp 0.6s ease forwards;
+}
+
+.top-list-item:nth-child(1) { animation-delay: 0.1s; }
+.top-list-item:nth-child(2) { animation-delay: 0.2s; }
+.top-list-item:nth-child(3) { animation-delay: 0.3s; }
+.top-list-item:nth-child(4) { animation-delay: 0.4s; }
+.top-list-item:nth-child(5) { animation-delay: 0.5s; }
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .top-list-item {
+        padding: 0.5rem;
+    }
+
+    .top-list-item .rank {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+        margin-right: 0.75rem;
+    }
+
+    .player-name {
+        font-size: 0.9rem;
+    }
+
+    .player-stat {
+        font-size: 0.8rem;
+    }
+
+    .level-badge, .kd-badge, .win-rate-badge {
+        padding: 0.2rem 0.6rem;
+        font-size: 0.7rem;
+    }
+}
+
+/* Specific styles for player name with gradient */
+.player-name-gradient {
+    display: inline-block;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    background-size: 200% 200%;
+}
+
+.gradient-animated {
+    animation: gradientShift 5s ease infinite;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
